@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -30,6 +30,9 @@
 posthog.init('phc_yXLZ8yRVWLMrFqWsE65QpfLHq2qgiPnobxgYXXnYoEKk',{api_host:'https://us.i.posthog.com',person_profiles:'identified_only',capture_pageview:true,autocapture:true});
 (function(){var p=new URLSearchParams(location.search),g=function(k){for(var a=['businessName','bn','email','e','phone','p','campaign','c','source','s'],i=0;i<a.length;i++){var v=p.get(a[i]);if(v)return{key:a[i],val:decodeURIComponent(v)}}return null};var bn=p.get('businessName')||p.get('bn'),em=p.get('email')||p.get('e'),ph=p.get('phone')||p.get('p'),ca=p.get('campaign')||p.get('c'),sr=p.get('source')||p.get('s');if(em||bn){posthog.identify(em||bn,{email:em,business_name:bn,phone:ph,campaign:ca,source:sr,site:location.hostname})}posthog.capture('page_viewed',{lead_business:bn,lead_email:em,campaign:ca,source:sr,site:location.hostname})})();
 </script>
+
+<!-- flattening logic -->
+<script>document.addEventListener('DOMContentLoaded', () => { document.querySelectorAll('.menu-item-has-children, .dropdown, .mega-menu-wrap, .has-dropdown').forEach(e => e.classList.remove('menu-item-has-children', 'dropdown', 'mega-menu-wrap', 'has-dropdown')); });</script>
 </head>
 
 <body>

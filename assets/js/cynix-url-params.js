@@ -8,45 +8,70 @@
     window.CynixUrlParamsLoaded = true;
 
     var params = new URLSearchParams(window.location.search);
+    var fallback = {
+        businessName: 'Cynix Inc Digital Solutions',
+        email: 'info.cynixinc@gmail.com',
+        phone: '+94722558244',
+        address: '267, Jampettah Street, Colombo 13',
+        tagline: 'Delicious Food Near Your Town'
+    };
+
     var normalized = {
-        businessName: params.get('businessName') || params.get('bn') || '',
-        email: params.get('email') || params.get('e') || '',
-        phone: params.get('phone') || params.get('p') || '',
-        address: params.get('address') || params.get('a') || '',
+        businessName: params.get('businessName') || params.get('bn') || fallback.businessName,
+        email: params.get('email') || params.get('e') || fallback.email,
+        phone: params.get('phone') || params.get('p') || fallback.phone,
+        address: params.get('address') || params.get('a') || fallback.address,
+        tagline: params.get('tagline') || params.get('t') || fallback.tagline,
         website: params.get('website') || params.get('w') || '',
-        tagline: params.get('tagline') || params.get('t') || '',
-        heroTitle: params.get('heroTitle') || params.get('ht') || '',
         color: params.get('color') || params.get('c') || ''
     };
 
     window.CynixUrlParams = normalized;
 
-    // Keep personalization active when moving across site pages.
+    function get(key) {
+        return normalized[key] || fallback[key] || '';
+    }
+
     document.addEventListener('DOMContentLoaded', function () {
-        if (!params.toString()) {
-            return;
-        }
-
-        var links = document.querySelectorAll('a[href]');
-        links.forEach(function (link) {
-            var href = link.getAttribute('href');
-            if (!href || href.startsWith('#') || href.startsWith('mailto:') || href.startsWith('tel:') || href.startsWith('javascript:')) {
-                return;
-            }
-
-            try {
-                var url = new URL(href, window.location.href);
-                if (url.origin !== window.location.origin) {
-                    return;
-                }
-
-                if (!url.search) {
-                    url.search = params.toString();
-                    link.setAttribute('href', url.pathname + url.search + url.hash);
-                }
-            } catch (e) {
-                // Ignore malformed links.
+        // Replace text content
+        document.querySelectorAll('[data-pb]').forEach(function (el) {
+            var key = el.getAttribute('data-pb');
+            if (key && normalized[key]) {
+                el.textContent = normalized[key];
             }
         });
+
+        // Replace href for phone links
+        document.querySelectorAll('[data-ph-phone]').forEach(function (el) {
+            var phone = get('phone');
+            if (phone) {
+                el.href = 'tel:' + phone.replace(/\s/g, '');
+            }
+        });
+
+        // Replace href for email links
+        document.querySelectorAll('[data-ph-email]').forEach(function (el) {
+            var email = get('email');
+            if (email) {
+                el.href = 'mailto:' + email;
+            }
+        });
+
+        // Update meta description
+        if (normalized.businessName !== fallback.businessName) {
+            var metaDesc = document.querySelector('meta[name="description"]');
+            if (metaDesc) {
+                var newDesc = normalized.businessName + ' - ' + normalized.tagline;
+                metaDesc.setAttribute('content', newDesc);
+            }
+        }
+
+        // Update page title
+        if (normalized.businessName !== fallback.businessName) {
+            var title = document.querySelector('title');
+            if (title) {
+                title.textContent = normalized.businessName;
+            }
+        }
     });
 })();
